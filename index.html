@@ -32,25 +32,24 @@
 </style>
 </head>
 <body>
-<!-- Menu Chọn Tướng -->
-    <div id="menu">
+<div id="menu">
         <h1>MOBA HUYỀN THOẠI 2D</h1>
-        <p style="margin-bottom: 20px; color: #95a5a6;">Chọn vị tướng của bạn để tham gia chiến trường:</p>
+        <p style="margin-bottom: 20px; color: #95a5a6;">Chọn vị tướng yêu thích của bạn:</p>
         <div class="hero-select">
             <div class="hero-card selected" onclick="selectHero(0)">
                 <div class="hero-avatar" style="color: #3498db;">V</div>
                 <div class="hero-name">Valhein</div>
-                <div class="hero-role">Xạ Thủ / Sát Thương Chuẩn</div>
+                <div class="hero-role">Xạ Thủ</div>
             </div>
             <div class="hero-card" onclick="selectHero(1)">
                 <div class="hero-avatar" style="color: #e74c3c;">A</div>
                 <div class="hero-name">Ahri</div>
-                <div class="hero-role">Pháp Sư / Cơ Động</div>
+                <div class="hero-role">Pháp Sư</div>
             </div>
             <div class="hero-card" onclick="selectHero(2)">
                 <div class="hero-avatar" style="color: #f1c40f;">Y</div>
                 <div class="hero-name">Yasuo</div>
-                <div class="hero-role">Đấu Sĩ / Bão Kiếm</div>
+                <div class="hero-role">Đấu Sĩ</div>
             </div>
             <div class="hero-card" onclick="selectHero(3)">
                 <div class="hero-avatar" style="color: #9b59b6;">T</div>
@@ -66,39 +65,36 @@
         <button onclick="startGame()">VÀO TRẬN ĐẤU</button>
     </div>
 
-    <!-- Màn Hình Game -->
     <div id="game-container">
         <div id="top-hud">Phe Xanh: <span id="score-blue">0</span> - Phe Đỏ: <span id="score-red">0</span></div>
         <button id="shop-btn" onclick="toggleShop()">Cửa Hàng (B)</button>
         <canvas id="gameCanvas" width="1000" height="600"></canvas>
         
-        <!-- Bảng Cửa Hàng -->
         <div id="shop-modal">
             <h2>CỬA HÀNG TRANG BỊ</h2>
             <div class="shop-item">
-                <span>Kiếm B.F. (+35 Sức Mạnh) - 500 Vàng</span>
-                <button onclick="buyItem('dmg', 500, 35)" style="padding: 6px 12px; font-size: 0.9rem;">Mua</button>
+                <span>Kiếm (+40 Sức Mạnh) - 500 Vàng</span>
+                <button onclick="buyItem('dmg', 500, 40)" style="padding: 5px 10px; background: #e67e22; border:none; color:#fff; border-radius:4px; cursor:pointer;">Mua</button>
             </div>
             <div class="shop-item">
-                <span>Giày Tốc Độ (+3 Tốc độ chạy) - 300 Vàng</span>
-                <button onclick="buyItem('spd', 300, 3)" style="padding: 6px 12px; font-size: 0.9rem;">Mua</button>
+                <span>Giày Tốc Độ (+0.8 Tốc chạy) - 300 Vàng</span>
+                <button onclick="buyItem('spd', 300, 0.8)" style="padding: 5px 10px; background: #e67e22; border:none; color:#fff; border-radius:4px; cursor:pointer;">Mua</button>
             </div>
             <div class="shop-item">
-                <span>Giáp Hộ Mệnh (+300 Máu) - 400 Vàng</span>
-                <button onclick="buyItem('hp', 400, 300)" style="padding: 6px 12px; font-size: 0.9rem;">Mua</button>
+                <span>Giáp (+400 Máu) - 400 Vàng</span>
+                <button onclick="buyItem('hp', 400, 400)" style="padding: 5px 10px; background: #e67e22; border:none; color:#fff; border-radius:4px; cursor:pointer;">Mua</button>
             </div>
-            <button onclick="toggleShop()" style="width: 100%; margin-top: 10px; background: #c0392b; font-size: 1rem; padding: 8px;">Đóng</button>
+            <button onclick="toggleShop()" style="width: 100%; margin-top: 10px; background: #c0392b; padding: 8px; border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;">Đóng</button>
         </div>
 
-        <!-- HUD Thanh Dưới -->
         <div id="hud">
             <div class="hud-left">
                 <div class="stats-display">
                     <div>Tướng: <b id="lbl-hero" style="color: #f1c40f;">Valhein</b> | Cấp: <span id="lbl-lvl">1</span></div>
-                    <div>Vàng: <span id="lbl-gold" style="color: #f1c40f;">500</span> | Máu: <span id="lbl-hp">500</span>/<span id="lbl-maxhp">500</span></div>
+                    <div>Vàng: <span id="lbl-gold" style="color: #f1c40f;">600</span> | Máu: <span id="lbl-hp">500</span>/<span id="lbl-maxhp">500</span></div>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 8px;">
                 <div class="skill-box">Q <span>Q</span></div>
                 <div class="skill-box">W <span>W</span></div>
                 <div class="skill-box">R <span>R</span></div>
@@ -118,11 +114,11 @@
 
     let selectedHeroIdx = 0;
     const heroTemplates = [
-        { name: "Valhein", role: "Xạ Thủ", hp: 1600, dmg: 140, range: 250, spd: 4.8, color: "#3498db" },
-        { name: "Ahri", role: "Pháp Sư", hp: 1400, dmg: 160, range: 280, spd: 5.0, color: "#e74c3c" },
-        { name: "Yasuo", role: "Đấu Sĩ", hp: 2000, dmg: 155, range: 75, spd: 5.2, color: "#f1c40f" },
-        { name: "Tel'Annas", role: "Xạ Thủ", hp: 1500, dmg: 170, range: 320, spd: 4.6, color: "#9b59b6" },
-        { name: "Triệu Vân", role: "Đấu Sĩ", hp: 2200, dmg: 165, range: 80, spd: 5.0, color: "#e67e22" }
+        { name: "Valhein", role: "Xạ Thủ", hp: 1600, dmg: 150, range: 250, spd: 4.8, color: "#3498db" },
+        { name: "Ahri", role: "Pháp Sư", hp: 1400, dmg: 170, range: 280, spd: 5.0, color: "#e74c3c" },
+        { name: "Yasuo", role: "Đấu Sĩ", hp: 2000, dmg: 160, range: 80, spd: 5.2, color: "#f1c40f" },
+        { name: "Tel'Annas", role: "Xạ Thủ", hp: 1500, dmg: 180, range: 320, spd: 4.6, color: "#9b59b6" },
+        { name: "Triệu Vân", role: "Đấu Sĩ", hp: 2200, dmg: 175, range: 85, spd: 5.0, color: "#e67e22" }
     ];
 
     function selectHero(idx) {
@@ -137,7 +133,7 @@
     let player, redTeam = [], blueMinions = [], redMinions = [], jungleCamps = [], projectiles = [], particles = [];
     let turrets = [];
     let keys = {};
-    let mouse = { x: 0, y: 0, clicked: false, rightClicked: false, target: null };
+    let mouse = { x: 0, y: 0, target: null };
     let gameScore = { blue: 0, red: 0 };
 
     function startGame() {
@@ -151,61 +147,52 @@
     function initGame() {
         let t = heroTemplates[selectedHeroIdx];
         player = {
-            x: 200, y: 300, radius: 18,
+            x: 180, y: 300, radius: 18,
             hp: t.hp, maxHp: t.hp, lvl: 1, exp: 0, maxExp: 100,
-            gold: 500, dmg: t.dmg, range: t.range, spd: t.spd,
+            gold: 600, dmg: t.dmg, range: t.range, spd: t.spd,
             color: t.color, name: t.name, team: 'blue',
             attackCooldown: 0, skillCooldowns: { Q: 0, W: 0, R: 0 }
         };
 
         document.getElementById('lbl-hero').innerText = player.name;
 
-        // Trụ bảo vệ 2 phe
         turrets = [
-            // Phe Xanh
-            { x: 150, y: 300, hp: 3500, maxHp: 3500, range: 250, dmg: 80, team: 'blue', attackCd: 0 },
-            { x: 400, y: 300, hp: 3000, maxHp: 3000, range: 220, dmg: 70, team: 'blue', attackCd: 0 },
-            // Phe Đỏ
-            { x: 600, y: 300, hp: 3000, maxHp: 3000, range: 220, dmg: 70, team: 'red', attackCd: 0 },
-            { x: 850, y: 300, hp: 3500, maxHp: 3500, range: 250, dmg: 80, team: 'red', attackCd: 0 }
+            { x: 150, y: 300, hp: 4000, maxHp: 4000, range: 240, dmg: 75, team: 'blue', attackCd: 0 },
+            { x: 850, y: 300, hp: 4000, maxHp: 4000, range: 240, dmg: 75, team: 'red', attackCd: 0 }
         ];
 
-        // Tướng Đỏ đối lập
         redTeam = [
-            { x: 800, y: 250, radius: 18, hp: 2000, maxHp: 2000, dmg: 120, range: 180, spd: 3.5, color: '#e74c3c', team: 'red', attackCooldown: 0 },
-            { x: 850, y: 380, radius: 18, hp: 1800, maxHp: 1800, dmg: 130, range: 240, spd: 3.8, color: '#c0392b', team: 'red', attackCooldown: 0 }
+            { x: 800, y: 260, radius: 18, hp: 2200, maxHp: 2200, dmg: 130, range: 200, spd: 3.5, color: '#e74c3c', team: 'red', attackCooldown: 0 },
+            { x: 820, y: 350, radius: 18, hp: 2000, maxHp: 2000, dmg: 140, range: 220, spd: 3.8, color: '#c0392b', team: 'red', attackCooldown: 0 }
         ];
 
-        // Quái Rừng trung tâm
         jungleCamps = [
-            { x: 500, y: 150, radius: 22, hp: 800, maxHp: 800, dmg: 40, goldReward: 90, expReward: 80, respawn: 0, alive: true },
-            { x: 500, y: 450, radius: 22, hp: 800, maxHp: 800, dmg: 40, goldReward: 90, expReward: 80, respawn: 0, alive: true }
+            { x: 500, y: 150, radius: 20, hp: 900, maxHp: 900, dmg: 45, goldReward: 100, expReward: 90, respawn: 0, alive: true },
+            { x: 500, y: 450, radius: 20, hp: 900, maxHp: 900, dmg: 45, goldReward: 100, expReward: 90, respawn: 0, alive: true }
         ];
 
-        spawnMinions();
+        spawnMinionWave();
     }
 
-    function spawnMinions() {
-        // Lính Xanh
-        blueMinions.push({ x: 100, y: 290 + (Math.random()*30 - 15), radius: 10, hp: 450, maxHp: 450, dmg: 35, range: 100, spd: 1.8, team: 'blue', attackCd: 0 });
-        blueMinions.push({ x: 100, y: 310 + (Math.random()*30 - 15), radius: 10, hp: 450, maxHp: 450, dmg: 35, range: 100, spd: 1.8, team: 'blue', attackCd: 0 });
+    function spawnMinionWave() {
+        blueMinions.push({ x: 120, y: 290, radius: 10, hp: 500, maxHp: 500, dmg: 35, range: 90, spd: 1.6, team: 'blue', attackCd: 0 });
+        blueMinions.push({ x: 120, y: 310, radius: 10, hp: 500, maxHp: 500, dmg: 35, range: 90, spd: 1.6, team: 'blue', attackCd: 0 });
 
-        // Lính Đỏ
-        redMinions.push({ x: 900, y: 290 + (Math.random()*30 - 15), radius: 10, hp: 450, maxHp: 450, dmg: 35, range: 100, spd: 1.8, team: 'red', attackCd: 0 });
-        redMinions.push({ x: 900, y: 310 + (Math.random()*30 - 15), radius: 10, hp: 450, maxHp: 450, dmg: 35, range: 100, spd: 1.8, team: 'red', attackCd: 0 });
+        redMinions.push({ x: 880, y: 290, radius: 10, hp: 500, maxHp: 500, dmg: 35, range: 90, spd: 1.6, team: 'red', attackCd: 0 });
+        redMinions.push({ x: 880, y: 310, radius: 10, hp: 500, maxHp: 500, dmg: 35, range: 90, spd: 1.6, team: 'red', attackCd: 0 });
     }
 
-    // Spawn lính định kỳ mỗi 12 giây
     setInterval(() => {
-        if(gameStarted) spawnMinions();
+        if(gameStarted) spawnMinionWave();
     }, 12000);
 
     window.addEventListener('keydown', e => {
-        keys[e.key.toLowerCase()] = true;
-        if(e.key.toLowerCase() === 'q') useSkill('Q');
-        if(e.key.toLowerCase() === 'w') useSkill('W');
-        if(e.key.toLowerCase() === 'r') useSkill('R');
-        if(e.key.toLowerCase() === 'b') toggleShop();
+        let k = e.key.toLowerCase();
+        keys[k] = true;
+        if(k === 'q') useSkill('Q');
+        if(k === 'w') useSkill('W');
+        if(k === 'r') useSkill('R');
+        if(k === 'b') toggleShop();
     });
     window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
@@ -217,26 +204,23 @@
 
     canvas.addEventListener('mousedown', e => {
         const rect = canvas.getBoundingClientRect();
-        let mx = e.clientX - rect.left;
-        let my = e.clientY - rect.top;
-
-        if(e.button === 2) { // Chuột phải để di chuyển
-            mouse.target = { x: mx, y: my };
+        if(e.button === 2) {
+            mouse.target = { x: e.clientX - rect.left, y: e.clientY - rect.top };
         }
     });
     canvas.addEventListener('contextmenu', e => e.preventDefault());
 
     function toggleShop() {
-        let modal = document.getElementById('shop-modal');
-        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        let m = document.getElementById('shop-modal');
+        m.style.display = m.style.display === 'block' ? 'none' : 'block';
     }
 
-    function buyItem(type, cost, value) {
+    function buyItem(type, cost, val) {
         if(player.gold >= cost) {
             player.gold -= cost;
-            if(type === 'dmg') player.dmg += value;
-            if(type === 'spd') player.spd += value;
-            if(type === 'hp') { player.maxHp += value; player.hp += value; }
+            if(type === 'dmg') player.dmg += val;
+            if(type === 'spd') player.spd += val;
+            if(type === 'hp') { player.maxHp += val; player.hp += val; }
             updateHUD();
         } else {
             alert('Không đủ vàng!');
@@ -245,28 +229,24 @@
 
     function useSkill(type) {
         if(player.skillCooldowns[type] > 0) return;
-        
         if(type === 'Q') {
-            player.skillCooldowns['Q'] = 180; // 3 giây
-            projectiles.push({ x: player.x, y: player.y, vx: 8, vy: 0, dmg: player.dmg * 1.8, range: 400, dist: 0, team: 'blue', color: '#f1c40f', radius: 8 });
+            player.skillCooldowns['Q'] = 120;
+            projectiles.push({ x: player.x, y: player.y, vx: 9, vy: 0, dmg: player.dmg * 2, range: 450, dist: 0, color: '#f1c40f', radius: 9 });
             createParticles(player.x, player.y, '#f1c40f', 15);
         } else if(type === 'W') {
-            player.skillCooldowns['W'] = 240; // 4 giây
-            // Gây sát thương diện rộng xung quanh tướng
-            [...redTeam, ...redMinions, ...jungleCamps.filter(c => c.alive)].forEach(target => {
-                let dist = Math.hypot(target.x - player.x, target.y - player.y);
-                if(dist < 130) {
-                    target.hp -= player.dmg * 2.2;
-                    createParticles(target.x, target.y, '#3498db', 12);
+            player.skillCooldowns['W'] = 180;
+            [...redTeam, ...redMinions, ...jungleCamps.filter(c => c.alive)].forEach(t => {
+                if(Math.hypot(t.x - player.x, t.y - player.y) < 140) {
+                    t.hp -= player.dmg * 2.5;
+                    createParticles(t.x, t.y, '#3498db', 15);
                 }
             });
         } else if(type === 'R') {
-            player.skillCooldowns['R'] = 360; // 6 giây - Chiêu cuối hủy diệt
-            [...redTeam, ...redMinions, ...turrets.filter(t => t.team === 'red')].forEach(target => {
-                let dist = Math.hypot(target.x - player.x, target.y - player.y);
-                if(dist < 300) {
-                    target.hp -= player.dmg * 3.5;
-                    createParticles(target.x, target.y, '#e74c3c', 25);
+            player.skillCooldowns['R'] = 300;
+            [...redTeam, ...redMinions, ...turrets.filter(t => t.team === 'red')].forEach(t => {
+                if(Math.hypot(t.x - player.x, t.y - player.y) < 320) {
+                    t.hp -= player.dmg * 4;
+                    createParticles(t.x, t.y, '#e74c3c', 30);
                 }
             });
         }
@@ -274,29 +254,20 @@
 
     function createParticles(x, y, color, count) {
         for(let i=0; i<count; i++) {
-            particles.push({
-                x: x, y: y,
-                vx: (Math.random() - 0.5) * 6,
-                vy: (Math.random() - 0.5) * 6,
-                alpha: 1, color: color, radius: Math.random() * 4 + 2
-            });
+            particles.push({ x, y, vx: (Math.random()-0.5)*7, vy: (Math.random()-0.5)*7, alpha: 1, color, radius: Math.random()*4 + 2 });
         }
     }
 
     function update() {
         if(!gameStarted) return;
 
-        // Giảm hồi chiêu kỹ năng
-        ['Q', 'W', 'R'].forEach(k => {
-            if(player.skillCooldowns[k] > 0) player.skillCooldowns[k]--;
-        });
+        ['Q', 'W', 'R'].forEach(k => { if(player.skillCooldowns[k] > 0) player.skillCooldowns[k]--; });
 
-        // Di chuyển Tướng bằng WASD hoặc hướng chuột phải
         let dx = 0, dy = 0;
-        if(keys['w']) dy -= 1;
-        if(keys['s']) dy += 1;
-        if(keys['a']) dx -= 1;
-        if(keys['d']) dx += 1;
+        if(keys['w'] || keys['arrowup']) dy -= 1;
+        if(keys['s'] || keys['arrowdown']) dy += 1;
+        if(keys['a'] || keys['arrowleft']) dx -= 1;
+        if(keys['d'] || keys['arrowright']) dx += 1;
 
         if(dx !== 0 || dy !== 0) {
             let len = Math.hypot(dx, dy);
@@ -305,121 +276,89 @@
             mouse.target = null;
         } else if(mouse.target) {
             let angle = Math.atan2(mouse.target.y - player.y, mouse.target.x - player.x);
-            let dist = Math.hypot(mouse.target.x - player.x, mouse.target.y - player.y);
-            if(dist > 5) {
+            if(Math.hypot(mouse.target.x - player.x, mouse.target.y - player.y) > 5) {
                 player.x += Math.cos(angle) * player.spd;
                 player.y += Math.sin(angle) * player.spd;
-            } else {
-                mouse.target = null;
-            }
+            } else { mouse.target = null; }
         }
 
-        // Giới hạn bản đồ
         player.x = Math.max(30, Math.min(canvas.width - 30, player.x));
         player.y = Math.max(30, Math.min(canvas.height - 30, player.y));
 
-        // Tự động đánh thường mục tiêu gần nhất
         if(player.attackCooldown > 0) player.attackCooldown--;
         if(player.attackCooldown === 0) {
             let targets = [...redTeam, ...redMinions, ...jungleCamps.filter(c => c.alive), ...turrets.filter(t => t.team === 'red')];
-            let closest = null, minDist = player.range + 20;
+            let closest = null, minDist = player.range + 30;
             targets.forEach(t => {
                 let dist = Math.hypot(t.x - player.x, t.y - player.y);
-                if(dist < minDist) {
-                    minDist = dist;
-                    closest = t;
-                }
+                if(dist < minDist) { minDist = dist; closest = t; }
             });
             if(closest) {
                 closest.hp -= player.dmg;
-                player.attackCooldown = 35; // Tốc độ đánh
-                createParticles(closest.x, closest.y, player.color, 5);
-                projectiles.push({ x: player.x, y: player.y, targetX: closest.x, targetY: closest.y, progress: 0, type: 'bullet', color: player.color });
+                player.attackCooldown = 30;
+                createParticles(closest.x, closest.y, player.color, 6);
             }
         }
 
-        // Cập nhật đạn & kỹ năng bay
         for(let i = projectiles.length - 1; i >= 0; i--) {
             let p = projectiles[i];
-            if(p.vx !== undefined) {
-                p.x += p.vx;
-                p.dist += Math.abs(p.vx);
-                // Kiểm tra va chạm kỹ năng bay
-                [...redTeam, ...redMinions, ...jungleCamps.filter(c => c.alive)].forEach(t => {
-                    if(Math.hypot(t.x - p.x, t.y - p.y) < t.radius + p.radius) {
-                        t.hp -= p.dmg;
-                        createParticles(t.x, t.y, p.color, 8);
-                        p.dist = p.range + 1; // Hủy đạn
-                    }
-                });
-                if(p.dist > p.range) projectiles.splice(i, 1);
-            }
+            p.x += p.vx;
+            p.dist += Math.abs(p.vx);
+            [...redTeam, ...redMinions, ...jungleCamps.filter(c => c.alive)].forEach(t => {
+                if(Math.hypot(t.x - p.x, t.y - p.y) < t.radius + p.radius) {
+                    t.hp -= 150;
+                    createParticles(t.x, t.y, '#f1c40f', 10);
+                    p.dist = p.range + 1;
+                }
+            });
+            if(p.dist > p.range) projectiles.splice(i, 1);
         }
 
-        // Cập nhật Lính Xanh
         blueMinions.forEach(m => {
             let target = redMinions[0] || redTeam[0] || turrets.find(t => t.team === 'red');
             if(target) {
                 let angle = Math.atan2(target.y - m.y, target.x - m.x);
-                let dist = Math.hypot(target.x - m.x, target.y - m.y);
-                if(dist > m.range) {
+                if(Math.hypot(target.x - m.x, target.y - m.y) > m.range) {
                     m.x += Math.cos(angle) * m.spd;
                     m.y += Math.sin(angle) * m.spd;
                 } else {
                     if(m.attackCd > 0) m.attackCd--;
-                    else {
-                        target.hp -= m.dmg;
-                        m.attackCd = 50;
-                    }
+                    else { target.hp -= m.dmg; m.attackCd = 45; }
                 }
             }
         });
 
-        // Cập nhật Lính Đỏ
         redMinions.forEach(m => {
             let target = blueMinions[0] || player || turrets.find(t => t.team === 'blue');
             if(target) {
                 let angle = Math.atan2(target.y - m.y, target.x - m.x);
-                let dist = Math.hypot(target.x - m.x, target.y - m.y);
-                if(dist > m.range) {
+                if(Math.hypot(target.x - m.x, target.y - m.y) > m.range) {
                     m.x += Math.cos(angle) * m.spd;
                     m.y += Math.sin(angle) * m.spd;
                 } else {
                     if(m.attackCd > 0) m.attackCd--;
-                    else {
-                        target.hp -= m.dmg;
-                        m.attackCd = 50;
-                    }
+                    else { target.hp -= m.dmg; m.attackCd = 45; }
                 }
             }
         });
 
-        // Cập nhật Trụ bắn
         turrets.forEach(turret => {
             if(turret.attackCd > 0) turret.attackCd--;
             let enemies = turret.team === 'blue' ? [...redTeam, ...redMinions] : [player, ...blueMinions];
             let target = null, minDist = turret.range;
             enemies.forEach(e => {
                 let dist = Math.hypot(e.x - turret.x, e.y - turret.y);
-                if(dist < minDist) {
-                    minDist = dist;
-                    target = e;
-                }
+                if(dist < minDist) { minDist = dist; target = e; }
             });
             if(target && turret.attackCd === 0) {
                 target.hp -= turret.dmg;
-                turret.attackCd = 45;
+                turret.attackCd = 40;
                 createParticles(target.x, target.y, '#e74c3c', 6);
             }
         });
 
-        // Kiểm tra tiêu diệt Lính, Quái Rừng & Nhận Vàng + EXP chuẩn MOBA
         for(let i = redMinions.length - 1; i >= 0; i--) {
-            if(redMinions[i].hp <= 0) {
-                player.gold += 20;
-                gainExp(35);
-                redMinions.splice(i, 1);
-            }
+            if(redMinions[i].hp <= 0) { player.gold += 25; gainExp(40); redMinions.splice(i, 1); }
         }
         for(let i = blueMinions.length - 1; i >= 0; i--) {
             if(blueMinions[i].hp <= 0) blueMinions.splice(i, 1);
@@ -427,72 +366,58 @@
 
         jungleCamps.forEach(c => {
             if(c.alive) {
-                let dist = Math.hypot(player.x - c.x, player.y - c.y);
-                if(dist < 180) { // Quái rừng tấn công khi lại gần
+                if(Math.hypot(player.x - c.x, player.y - c.y) < 180) {
                     let angle = Math.atan2(player.y - c.y, player.x - c.x);
-                    c.x += Math.cos(angle) * 1.2;
-                    c.y += Math.sin(angle) * 1.2;
+                    c.x += Math.cos(angle) * 1.5;
+                    c.y += Math.sin(angle) * 1.5;
                 }
                 if(c.hp <= 0) {
                     c.alive = false;
                     player.gold += c.goldReward;
                     gainExp(c.expReward);
-                    c.respawn = 600; // Hồi sinh sau 10 giây
+                    c.respawn = 500;
                 }
             } else {
                 c.respawn--;
-                if(c.respawn <= 0) {
-                    c.hp = c.maxHp;
-                    c.alive = true;
-                }
+                if(c.respawn <= 0) { c.hp = c.maxHp; c.alive = true; }
             }
         });
 
-        // Kiểm tra phá hủy trụ (Nhận Vàng thưởng lớn, KHÔNG nhận EXP)
         turrets.forEach(t => {
             if(t.hp <= 0 && t.alive !== false) {
                 t.alive = false;
-                if(t.team === 'red') {
-                    player.gold += 300;
-                    gameScore.blue++;
-                } else {
-                    gameScore.red++;
-                }
+                if(t.team === 'red') { player.gold += 400; gameScore.blue++; }
+                else { gameScore.red++; }
             }
         });
 
-        // Cập nhật hạt hiệu ứng
         for(let i = particles.length - 1; i >= 0; i--) {
             let p = particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.alpha -= 0.03;
+            p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
             if(p.alpha <= 0) particles.splice(i, 1);
         }
 
-        // Hồi máu cho Tướng nếu không giao tranh
-        if(player.hp < player.maxHp) player.hp += 0.05;
-
+        if(player.hp < player.maxHp) player.hp += 0.08;
         updateHUD();
     }
 
-    function gainExp(amount) {
-        player.exp += amount;
+    function gainExp(amt) {
+        player.exp += amt;
         if(player.exp >= player.maxExp) {
             player.exp -= player.maxExp;
             player.lvl++;
-            player.maxExp = Math.floor(player.maxExp * 1.3);
-            player.maxHp += 150;
+            player.maxExp = Math.floor(player.maxExp * 1.25);
+            player.maxHp += 200;
             player.hp = player.maxHp;
-            player.dmg += 25;
-            createParticles(player.x, player.y, '#f1c40f', 30);
+            player.dmg += 30;
+            createParticles(player.x, player.y, '#f1c40f', 35);
         }
     }
 
     function updateHUD() {
         document.getElementById('lbl-lvl').innerText = player.lvl;
         document.getElementById('lbl-gold').innerText = Math.floor(player.gold);
-        document.getElementById('lbl-hp').innerText = Math.floor(player.hp);
+        document.getElementById('lbl-hp').innerText = Math.max(0, Math.floor(player.hp));
         document.getElementById('lbl-maxhp').innerText = player.maxHp;
         document.getElementById('lbl-dmg').innerText = player.dmg;
         document.getElementById('lbl-spd').innerText = player.spd.toFixed(1);
@@ -501,118 +426,65 @@
     }
 
     function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Vẽ bản đồ MOBA (Lane, Sân Tháp)
         ctx.fillStyle = '#18202c';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Đường Lane chính giữa
         ctx.fillStyle = '#222d3d';
         ctx.fillRect(0, 240, canvas.width, 120);
 
-        // Khu vực Rừng trên & dưới
         ctx.strokeStyle = '#2b394f';
         ctx.lineWidth = 2;
         ctx.strokeRect(400, 50, 200, 150);
         ctx.strokeRect(400, 400, 200, 150);
 
-        // Vẽ Trụ
         turrets.forEach(t => {
             if(t.alive !== false) {
                 ctx.fillStyle = t.team === 'blue' ? '#3498db' : '#e74c3c';
-                ctx.beginPath();
-                ctx.arc(t.x, t.y, 24, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.lineWidth = 4;
-                ctx.strokeStyle = '#fff';
-                ctx.stroke();
+                ctx.beginPath(); ctx.arc(t.x, t.y, 25, 0, Math.PI * 2); ctx.fill();
+                ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.stroke();
 
-                // Thanh máu trụ
-                ctx.fillStyle = '#000';
-                ctx.fillRect(t.x - 25, t.y - 35, 50, 6);
+                ctx.fillStyle = '#000'; ctx.fillRect(t.x - 25, t.y - 35, 50, 6);
                 ctx.fillStyle = t.team === 'blue' ? '#2ecc71' : '#e74c3c';
                 ctx.fillRect(t.x - 25, t.y - 35, (t.hp / t.maxHp) * 50, 6);
             }
         });
 
-        // Vẽ Quái Rừng
         jungleCamps.forEach(c => {
             if(c.alive) {
                 ctx.fillStyle = '#e67e22';
-                ctx.beginPath();
-                ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#d35400';
-                ctx.lineWidth = 3;
-                ctx.stroke();
+                ctx.beginPath(); ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#d35400'; ctx.lineWidth = 3; ctx.stroke();
 
-                // Thanh máu quái rừng
-                ctx.fillStyle = '#000';
-                ctx.fillRect(c.x - 20, c.y - 30, 40, 5);
-                ctx.fillStyle = '#2ecc71';
-                ctx.fillRect(c.x - 20, c.y - 30, (c.hp / c.maxHp) * 40, 5);
+                ctx.fillStyle = '#000'; ctx.fillRect(c.x - 20, c.y - 28, 40, 5);
+                ctx.fillStyle = '#2ecc71'; ctx.fillRect(c.x - 20, c.y - 28, (c.hp / c.maxHp) * 40, 5);
             }
         });
 
-        // Vẽ Lính Xanh & Đỏ
-        blueMinions.forEach(m => {
-            ctx.fillStyle = '#3498db';
-            ctx.beginPath();
-            ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
-            ctx.fill();
-        });
-        redMinions.forEach(m => {
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath();
-            ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
-            ctx.fill();
-        });
+        blueMinions.forEach(m => { ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(m.x, m.y, m.radius, 0, Math.PI*2); ctx.fill(); });
+        redMinions.forEach(m => { ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.arc(m.x, m.y, m.radius, 0, Math.PI*2); ctx.fill(); });
 
-        // Vẽ Tướng Địch
         redTeam.forEach(hero => {
             ctx.fillStyle = hero.color;
-            ctx.beginPath();
-            ctx.arc(hero.x, hero.y, hero.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            ctx.beginPath(); ctx.arc(hero.x, hero.y, hero.radius, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
         });
 
-        // Vẽ Tướng Người Chơi
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = player.color;
+        ctx.shadowBlur = 15; ctx.shadowColor = player.color;
         ctx.fillStyle = player.color;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 3;
-        ctx.stroke();
+        ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0; ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
 
-        // Thanh máu người chơi
-        ctx.fillStyle = '#000';
-        ctx.fillRect(player.x - 25, player.y - 28, 50, 6);
-        ctx.fillStyle = '#2ecc71';
-        ctx.fillRect(player.x - 25, player.y - 28, (player.hp / player.maxHp) * 50, 6);
+        ctx.fillStyle = '#000'; ctx.fillRect(player.x - 25, player.y - 28, 50, 6);
+        ctx.fillStyle = '#2ecc71'; ctx.fillRect(player.x - 25, player.y - 28, (player.hp / player.maxHp) * 50, 6);
 
-        // Vẽ Đạn & Hiệu ứng kỹ năng
         projectiles.forEach(p => {
-            ctx.fillStyle = p.color || '#f1c40f';
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius || 4, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = p.color;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
         });
 
-        // Vẽ Hạt Phân Tử Nổ
         particles.forEach(p => {
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = p.alpha;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
             ctx.globalAlpha = 1.0;
         });
     }
