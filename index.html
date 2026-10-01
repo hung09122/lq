@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3v3 Offline MOBA - Prototype</title>
+   <style>
+
+  html,body{height:100%;margin:0;background:#111;color:#eee;font-family:Arial,Helvetica,sans-serif}
+
+  #gameWrap{display:flex;flex-direction:column;height:100%}
+
+  canvas{background:#0f1720;display:block;margin:0 auto;touch-action:none}
+
+  .hud{display:flex;justify-content:space-between;padding:8px 12px;align-items:center}
+
+  .panel{background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;font-size:14px}
+
+  #controls{position:fixed;left:0;bottom:0;right:0;top:0;pointer-events:none}
+
+  .joystick{position: absolute;pointer-events:auto;touch-action:none}
+
+  .leftJoy{left:12px;bottom:12px;width:180px;height:180px}
+
+  .rightJoy{right:12px;bottom:12px;width:160px;height:160px}
+
+  .joyBase{position:absolute;border-radius:50%;background:rgba(255,255,255,0.04);width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+
+  .joyKnob{position:absolute;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.12);transform:translate(-50%,-50%);left:50%;top:50%}
+
+  #btnRestart{background:#2563eb;border:none;padding:8px 12px;border-radius:8px;color:white;cursor:pointer}
+
+  #instructions{font-size:13px;opacity:0.9}
+
+  @media (max-width:600px){ .leftJoy{width:144px;height:144px}.rightJoy{width:140px;height:140px} .joyKnob{width:54px;height:54px} }
+
+</style>
+</head>
+<body>
+<div id="gameWrap">
+
+  <div class="hud">
+
+    <div class="panel" id="scorePanel">Team A: 0 — Team B: 0</div>
+
+    <div class="panel" id="instructions">Sol joystick: hareket • Sağ joystick: nişan & otomatik atış</div>
+
+    <div class="panel"><button id="btnRestart">Yeniden Başlat</button></div>
+
+  </div>
+
+  <canvas id="c"></canvas>
+
+</div>
+
+<div id="controls">
+
+  <div class="joystick leftJoy" id="leftJoy" aria-hidden="true">
+
+    <div class="joyBase"></div>
+
+    <div class="joyKnob" id="leftKnob"></div>
+
+  </div>
+
+  <div class="joystick rightJoy" id="rightJoy" aria-hidden="true">
+
+    <div class="joyBase"></div>
+
+    <div class="joyKnob" id="rightKnob"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+// ---------- Settings ----------
+
+const WIDTH = 960, HEIGHT = 640;
+
+const TEAMS = [0,1];
+
+const CHAR_POOL = [
+
+  {name:'Blazer', color:'#FF783C', maxHp:80, speed:220, fireRate:0.22, bulletSpeed:420, dmg:12, role:'Assault'},
+
+  {name:'Tankor', color:'#5050C8', maxHp:180, speed:110, fireRate:0.9, bulletSpeed:300, dmg:28, role:'Tank'},
+
+  {name:'Snipra', color:'#78C8FF', maxHp:70, speed:150, fireRate:1.4, bulletSpeed:700, dmg:45, role:'Sniper'},
+
+  {name:'Medic', color:'#78FF8C', maxHp:100, speed:160, fireRate:0.6, bulletSpeed:360, dmg:6, role:'Support'},
+
+  {name:'Pyro', color:'#FF50B4', maxHp:110, speed:180, fireRate:0.35, bulletSpeed:260, dmg:10, role:'Melee'},
+
+  {name:'Ranger', color:'#C8C864', maxHp:110, speed:170, fireRate:0.4, bulletSpeed:380, dmg:14, role:'Balanced'},
+
+];
+
+let canvas = document.getElementById('c');
+
+let ctx = canvas.getContext('2d');
+
+canvas.width = WIDTH; canvas.height = HEIGHT;
+
+let lastT = performance.now();
+
+let bullets = [];
+
+let characters = [];
+
+let player = null;
+
+let gameTime = 180;
+
+let remainingTime = gameTime;
+
+let running = true;
+
+// Score
+
+let scoreA = 0, scoreB = 0;
+
+// Joystick state
+
+const leftJoy = document.getElementById('leftJoy');
+
+const rightJoy = document.getElementById('rightJoy');
+
+const leftKnob = document.getElementById('leftKnob');
+
+const rightKnob = document.getElementById('rightKnob');
+
+let leftPointer = null, rightPointer = null;
+
+let leftVec = {x:0,y:0,mag:0}, rightVec = {x:0,y:0,mag:0};
+
+function resizeCanvas(){
+
+  // scale canvas to fit window while keeping aspect ratio
+
+  const winW = window.innerWidth, winH = window.innerHeight - document.querySelector('.hud').offsetHeight;
+
+  const scale = Math.min(winW/WIDTH, winH/HEIGHT);
+
+  canvas.style.width = Math.round(WIDTH*scale) + 'px';
+
+  canvas.style.height = Math.round(HEIGHT*scale) + 'px';
+
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+resizeCanvas();
+
+// ---------- Utility ----------
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+function len(v){return Math.hypot(v.x,v.y);}
+
+function normalize(v){let l=len(v); return l?{x:v.x/l,y:v.y/l}:{x:0,y:0};}
+
+// ---------- Game objects ----------
+
+class Bullet{
+
+  constructor(x,y,vx,vy,owner,speed,dmg){
+
+    this.x=x;this.y=y;this.vx=vx;this.vy=vy;this.owner=owner;this.speed=speed;this.dmg=dmg;
+
+    this.radius=4; this.life=2.5; this.team=owner.team;
+
+  }
+
+  update(dt){
+
+    this.x += this.vx*dt; this.y += this.vy*dt; this.life -= dt;
+
+  }
+
+  draw(ctx){
+
+    ctx.fillStyle = '#FFE05A';
+
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill();
+
+  }
+
+}
+
+class Character{
+
+  constructor(def, team, x,y, isPlayer=false){
+
+    this.def = def; this.name = def.name; this.color = def.color; this.maxHp=def.maxHp; this.hp=this.maxHp;
+
+    this.speed = def.speed; this.fireRate = def.fireRate;
+</body>
+</html>
